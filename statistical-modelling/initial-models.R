@@ -1,7 +1,8 @@
 #-----------------------------------------
 # This script aims to produce initial
 # statistical models of brain-self report
-# linkage
+# linkage using Jeff's initial charts
+# as a reference
 #
 # NOTE: This script requires setup.R to
 # have been run first
@@ -13,8 +14,9 @@
 
 # Load data
 
-d <- read.csv("data/Everything.csv") %>%
-  clean_names()
+d <- read.csv("data/correlation figure.csv") %>%
+  clean_names() %>%
+  drop_na()
 
 # Keep in environment
 
@@ -24,13 +26,25 @@ if (!exists(keepers)) {
   keepers <- union(keepers, "d")
 }
 
-#-----------------PRE PROCESSING------------------
-
-
-
 #-----------------STATISTICAL MODELLING-----------
 
+#---------------------
+# RESPONSE: Reassuring
+#---------------------
 
+model_reassure <- gam(mpfc_reassuring ~ s(t_fscrs_inad) + 
+                        s(fears_of_expressing_compassion_to_self),
+             data = d)
+summary(model_reassure)
+
+#---------------------
+# RESPONSE: AI
+#---------------------
+
+model_ai <- gam(ai_reassurance ~ s(t_fscrs_inad) + 
+                  s(fears_of_expressing_compassion_to_self),
+                      data = d)
+summary(model_ai)
 
 #-----------------DATA VIS & OUTPUTS--------------
 

@@ -15,6 +15,7 @@ library(janitor)
 library(data.table)
 library(mgcv)
 library(broom)
+library(ggpubr)
 library(Cairo)
 
 # Turn off scientific notation
