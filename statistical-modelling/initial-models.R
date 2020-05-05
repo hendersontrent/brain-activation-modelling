@@ -36,14 +36,14 @@ if (!exists(keepers)) {
 
 model_reassure <- gam(mpfc_reassuring ~ s(t_fscrs_inad) + 
                         s(fears_of_expressing_compassion_to_self),
-             data = d)
+                          data = d)
 summary(model_reassure)
 
 # GLM
 
 model_reassure_glm <- glm(mpfc_reassuring ~ t_fscrs_inad + 
                         fears_of_expressing_compassion_to_self,
-                      data = d)
+                          data = d)
 summary(model_reassure_glm)
 
 # Model comparisons
@@ -59,14 +59,14 @@ sum(abs(residuals(model_reassure_glm)))
 
 model_ai <- gam(ai_reassurance ~ s(t_fscrs_inad) + 
                   s(fears_of_expressing_compassion_to_self),
-                      data = d)
+                    data = d)
 summary(model_ai)
 
 # GLM
 
 model_ai_glm <- glm(ai_reassurance ~ t_fscrs_inad + 
-                            fears_of_expressing_compassion_to_self,
-                          data = d)
+                      fears_of_expressing_compassion_to_self,
+                         data = d)
 summary(model_ai_glm)
 
 # Model comparisons

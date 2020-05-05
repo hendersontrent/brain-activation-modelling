@@ -17,6 +17,8 @@ library(mgcv)
 library(broom)
 library(ggpubr)
 library(Cairo)
+library(MCMCpack)
+library(arm)
 
 # Turn off scientific notation
 
