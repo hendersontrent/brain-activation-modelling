@@ -30,9 +30,7 @@ if (!exists(keepers)) {
 
 set.seed(123)
 model <- MCMCregress(mpfc_reassuring ~ 1 + t_fscrs_inad + fears_of_expressing_compassion_to_self,
-                    data = d, burnin = 1000, mcmc = 10000, thin = 1,
-                    b0 = c(0,0,0), # Prior mean
-                    B0 = c(0,0,0)) # Prior precision
+                    data = d, burnin = 1000, mcmc = 10000, thin = 1)
 
 #-----------------MODEL OUTPUTS--------------
 
