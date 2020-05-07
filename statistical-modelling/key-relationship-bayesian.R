@@ -61,6 +61,21 @@ amyg_re_bayes_ci <- posterior_interval(amyg_re_bayes, prob = 0.95,
                                        pars = c("s_dass_stress", "t_fscrs_inad", 
                                                 "fears_of_expressing_compassion_to_self"))
 
+# Model diagnostics
+
+amyg_re_bayes_small <- update(amyg_re_bayes, formula. = . ~ . + I(s_dass_stress^2))
+
+amyg_re_bayes_loo_1 <- loo(amyg_re_bayes) # Leave-one-out cross validation
+amyg_re_bayes_loo_2 <- loo(amyg_re_bayes_small)
+
+par(mfrow = 1:2, mar = c(5,3.8,1,0) + 0.1, las = 3)
+plot(amyg_re_bayes_loo_1, label_points = TRUE)
+plot(amyg_re_bayes_loo_2, label_points = TRUE)
+
+loo_compare(amyg_re_bayes_loo_1, amyg_re_bayes_loo_2) # Compares expected log pointwise deviance
+
+amyg_re_bayes_loo_1 # Returns LOOIC - Bayesian equivalent of AIC
+
 #-------------------------------
 # RESPONSE: MPFC reassurance
 #-------------------------------
