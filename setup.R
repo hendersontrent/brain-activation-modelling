@@ -17,8 +17,8 @@ library(mgcv)
 library(broom)
 library(ggpubr)
 library(Cairo)
-library(MCMCpack)
-library(arm)
+library(rstanarm)
+library(bayesplot)
 
 # Turn off scientific notation
 
