@@ -1,0 +1,193 @@
+---
+title: "Prelim Bayesian reassurance outputs"
+author: "Trent Henderson"
+date: "07/05/2020"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(data.table)
+library(mgcv)
+library(broom)
+library(ggpubr)
+library(Cairo)
+library(rstanarm)
+library(bayesplot)
+
+options(scipen = 999)
+
+d <- read.csv("Everything.csv") %>%
+  clean_names()
+```
+
+## About this document
+
+This is a summary of initial Bayesian statistical models which aim to explore predictors of reassurance activation in three regions of the brain:
+
+1. Amygdala
+2. Medial prefrontal cortex (MPFC)
+3. Auditory cortex (AI)
+
+The predictors used in the models included:
+
+* Stress (DASS)
+* Inadequate forms criticism
+* Fear of expressing compassion to self
+
+## Results
+
+This section is organised according to the three brain region activation response variables.
+
+### Amygdala reassurance
+
+Posterior distributions of the predictors.
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+invisible(amyg_re_bayes <- stan_glm(amygdala_reassurance ~ s_dass_stress + t_fscrs_inad + 
+                            fears_of_expressing_compassion_to_self,
+                          data = d,
+                          family = gaussian(),
+                          seed = 123)) # Uses default weakly informative priors
+
+# Plots
+
+amyg_re_bayes_posterior <- as.matrix(amyg_re_bayes)
+
+mcmc_areas(amyg_re_bayes_posterior,
+           pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
+           prob = 0.8) +
+  labs(title = "Amygdala reassurance posterior distributions",
+       subtitle = "Includes medians and 80% intervals")
+```
+
+A sample of posterior draws highlight an interesting pattern.
+
+```{r, echo = FALSE, message = FALSE}
+ppc_dens_overlay(y = amyg_re_bayes$y,
+                 yrep = posterior_predict(amyg_re_bayes, draws = 100)) +
+  labs(title = "Amygdala reassurance posterior predictions",
+       subtitle = "Draws = 100")
+```
+
+Bayesian uncertainty intervals suggest none of the predictors explain amygdala reassurance.
+
+```{r, echo = FALSE, message = FALSE}
+posterior_interval(amyg_re_bayes, prob = 0.95,
+                                       pars = c("s_dass_stress", "t_fscrs_inad", 
+                                                "fears_of_expressing_compassion_to_self"))
+```
+
+### MPFC
+
+Posterior distributions of the predictors.
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+invisible(mpfc_re_bayes <- stan_glm(mpfc_reassuring ~ s_dass_stress + t_fscrs_inad + 
+                            fears_of_expressing_compassion_to_self,
+                          data = d,
+                          family = gaussian(),
+                          seed = 123)) # Uses default weakly informative priors
+
+# Plots
+
+mpfc_re_bayes_posterior <- as.matrix(mpfc_re_bayes)
+
+mcmc_areas(mpfc_re_bayes_posterior,
+           pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
+           prob = 0.8) +
+  labs(title = "MPFC reassurance posterior distributions",
+       subtitle = "Includes medians and 80% intervals")
+```
+
+A sample of posterior draws highlight an interesting pattern.
+
+```{r, echo = FALSE, message = FALSE}
+ppc_dens_overlay(y = mpfc_re_bayes$y,
+                 yrep = posterior_predict(mpfc_re_bayes, draws = 100)) +
+  labs(title = "MPFC reassurance posterior predictions",
+       subtitle = "Draws = 100")
+```
+
+Bayesian uncertainty intervals suggest that there is essentially zero probability that inadequate forms of criticism is < 0.
+
+```{r, echo = FALSE, message = FALSE}
+posterior_interval(mpfc_re_bayes, prob = 0.95,
+                                       pars = c("s_dass_stress", "t_fscrs_inad", 
+                                                "fears_of_expressing_compassion_to_self"))
+```
+
+Model criticisms show that there aren't many outliers outside the 0.5 threshold which may impact the model.
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+invisible(mpfc_re_bayes_small <- update(mpfc_re_bayes, formula. = . ~ . + I(s_dass_stress^2)))
+
+mpfc_re_bayes_loo_1 <- loo(mpfc_re_bayes) # Leave-one-out cross validation
+mpfc_re_bayes_loo_2 <- loo(mpfc_re_bayes_small)
+
+par(mfrow = 1:2, mar = c(5,3.8,1,0) + 0.1, las = 3)
+plot(mpfc_re_bayes_loo_1, label_points = TRUE)
+plot(mpfc_re_bayes_loo_2, label_points = TRUE)
+```
+
+### AI
+
+Posterior distributions of the predictors.
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+invisible(ai_re_bayes <- stan_glm(ai_reassurance ~ s_dass_stress + t_fscrs_inad + 
+                            fears_of_expressing_compassion_to_self,
+                          data = d,
+                          family = gaussian(),
+                          seed = 123)) # Uses default weakly informative priors
+
+# Plots
+
+ai_re_bayes_posterior <- as.matrix(ai_re_bayes)
+
+mcmc_areas(ai_re_bayes_posterior,
+           pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
+           prob = 0.8) +
+  labs(title = "AI reassurance posterior distributions",
+       subtitle = "Includes medians and 80% intervals")
+```
+
+A sample of posterior draws highlight an interesting pattern.
+
+```{r, echo = FALSE, message = FALSE}
+ppc_dens_overlay(y = ai_re_bayes$y,
+                 yrep = posterior_predict(ai_re_bayes, draws = 100)) +
+  labs(title = "AI reassurance posterior predictions",
+       subtitle = "Draws = 100")
+```
+
+Bayesian uncertainty intervals suggest that there is essentially zero probability that inadequate forms of criticism is < 0.
+
+```{r, echo = FALSE, message = FALSE}
+posterior_interval(ai_re_bayes, prob = 0.95,
+                   pars = c("s_dass_stress", "t_fscrs_inad", 
+                            "fears_of_expressing_compassion_to_self"))
+```
+
+Model criticisms show that there aren't many outliers outside the 0.5 threshold which may impact the model.
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+invisible(ai_re_bayes_small <- update(ai_re_bayes, formula. = . ~ . + I(s_dass_stress^2)))
+
+ai_re_bayes_loo_1 <- loo(ai_re_bayes) # Leave-one-out cross validation
+ai_re_bayes_loo_2 <- loo(ai_re_bayes_small)
+
+par(mfrow = 1:2, mar = c(5,3.8,1,0) + 0.1, las = 3)
+plot(ai_re_bayes_loo_1, label_points = TRUE)
+plot(ai_re_bayes_loo_2, label_points = TRUE)
+```
+
+## Next steps
+
+Frequentist analysis using Generalised Additive Models (GAM) have also be completed. It will be determined whether this or the Bayesian approach should be used.
