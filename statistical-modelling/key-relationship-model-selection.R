@@ -38,6 +38,11 @@ amyg_re_gam <- gam(amygdala_reassurance ~ s(s_dass_stress) + s(t_fscrs_inad) +
                    data = d)
 summary(amyg_re_gam)
 
+visreg(amyg_re_gam, "s_dass_stress", gg = TRUE, ylab = "Amygdala reassurance")
+visreg(amyg_re_gam, "t_fscrs_inad", gg = TRUE, ylab = "Amygdala reassurance")
+visreg(amyg_re_gam, "fears_of_expressing_compassion_to_self", gg = TRUE, 
+       ylab = "Amygdala reassurance")
+
 # GLM
 
 amyg_re_glm <- glm(amygdala_reassurance ~ s_dass_stress + t_fscrs_inad + 
@@ -59,6 +64,11 @@ mpfc_re_gam <- gam(mpfc_reassuring ~ s(s_dass_stress) + s(t_fscrs_inad) +
                    data = d)
 summary(mpfc_re_gam)
 
+visreg(mpfc_re_gam, "s_dass_stress", gg = TRUE, ylab = "MPFC reassurance")
+visreg(mpfc_re_gam, "t_fscrs_inad", gg = TRUE, ylab = "MPFC reassurance")
+visreg(mpfc_re_gam, "fears_of_expressing_compassion_to_self", gg = TRUE, 
+       ylab = "MPFC reassurance")
+
 # GLM
 
 mpfc_re_glm <- glm(mpfc_reassuring ~ s_dass_stress + t_fscrs_inad + 
@@ -79,6 +89,11 @@ ai_re_gam <- gam(ai_reassurance ~ s(s_dass_stress) + s(t_fscrs_inad) +
                     s(fears_of_expressing_compassion_to_self),
                   data = d)
 summary(acc_re_gam)
+
+visreg(ai_re_gam, "s_dass_stress", gg = TRUE, ylab = "AI reassurance")
+visreg(ai_re_gam, "t_fscrs_inad", gg = TRUE, ylab = "AI reassurance")
+visreg(ai_re_gam, "fears_of_expressing_compassion_to_self", gg = TRUE, 
+       ylab = "AI reassurance")
 
 # GLM
 

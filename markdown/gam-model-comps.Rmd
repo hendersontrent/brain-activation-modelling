@@ -1,0 +1,194 @@
+---
+title: "GAM model comparisons"
+author: "Trent Henderson"
+date: "08/05/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(data.table)
+library(mgcv)
+library(broom)
+library(ggpubr)
+library(Cairo)
+library(visreg)
+
+options(scipen = 999)
+
+d <- read.csv("Everything.csv") %>%
+  clean_names()
+```
+
+## About this document
+
+This is a summary of initial Generalised Additive Model (GAM) statistical models which aim to explore predictors of reassurance activation in three regions of the brain:
+
+1. Amygdala
+2. Medial prefrontal cortex (MPFC)
+3. Auditory cortex (AI)
+
+The predictors used in the models included:
+
+* Stress (DASS)
+* Inadequate forms criticism
+* Fear of expressing compassion to self
+
+This document shows comparisons between different GAMs where the "Stress" variable from the DASS is either includedor excluded.
+
+## Results
+
+This section is organised according to the three brain region activation response variables.
+
+### Amygdala reassurance
+
+#### Complex model (with stress)
+
+No predictors "significantly" predict amygdala reassurance.
+
+```{r, echo = FALSE, message = FALSE}
+amyg_re_gam_full <- gam(amygdala_reassurance ~ s(s_dass_stress) + s(t_fscrs_inad) + 
+                     s(fears_of_expressing_compassion_to_self),
+                   data = d)
+summary(amyg_re_gam_full)
+```
+
+#### Parsimonious model (without stress)
+
+No predictors "significantly" predict amygdala reassurance.
+
+```{r, echo = FALSE, message = FALSE}
+amyg_re_gam_pars <- gam(amygdala_reassurance ~ s(t_fscrs_inad) + 
+                     s(fears_of_expressing_compassion_to_self),
+                   data = d)
+summary(amyg_re_gam_pars)
+```
+
+### MPFC
+
+#### Complex model (with stress)
+
+Inadequate forms is a significant predictor.
+
+```{r, echo = FALSE, message = FALSE}
+mpfc_re_gam_full <- gam(mpfc_reassuring ~ s(s_dass_stress) + s(t_fscrs_inad) + 
+                     s(fears_of_expressing_compassion_to_self),
+                   data = d)
+summary(mpfc_re_gam_full)
+```
+
+#### Parsimonious model (without stress)
+
+Inadequate forms is a significant predictor.
+
+```{r, echo = FALSE, message = FALSE}
+mpfc_re_gam_pars <- gam(mpfc_reassuring ~ s(t_fscrs_inad) + 
+                          s(fears_of_expressing_compassion_to_self),
+                        data = d)
+summary(mpfc_re_gam_pars)
+```
+
+#### Model selection
+
+Residuals are very close between the models.
+
+```{r, echo = FALSE, message = FALSE}
+sum(abs(residuals(mpfc_re_gam_full)))
+sum(abs(residuals(mpfc_re_gam_pars)))
+```
+
+AIC values are virtually indistinguishable between the models.
+
+```{r, echo = FALSE, message = FALSE}
+AIC(mpfc_re_gam_full)
+AIC(mpfc_re_gam_pars)
+```
+
+Deviance explained is also quite close between the models considering one omits a whole variable.
+
+```{r, echo = FALSE, message = FALSE}
+summary(mpfc_re_gam_full)$dev.expl
+summary(mpfc_re_gam_pars)$dev.expl
+```
+
+#### Plots
+
+The models are too close to justify the complex model (with stress). The below plots show the relationships for the parsimonious model (without stress).
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+p3 <- visreg(mpfc_re_gam_pars, "t_fscrs_inad", gg = TRUE, ylab = "MPFC reassurance")
+p4 <- visreg(mpfc_re_gam_pars, "fears_of_expressing_compassion_to_self", gg = TRUE, 
+       ylab = "MPFC reassurance")
+
+ggarrange(p3,p4, nrow = 2)
+```
+
+### AI
+
+#### Complex model (with stress)
+
+Inadequate forms is a significant predictor.
+
+```{r, echo = FALSE, message = FALSE}
+ai_re_gam_full <- gam(ai_reassurance ~ s(s_dass_stress) + s(t_fscrs_inad) + 
+                   s(fears_of_expressing_compassion_to_self),
+                 data = d)
+summary(ai_re_gam_full)
+```
+
+#### Parsimonious model (without stress)
+
+Inadequate forms is a significant predictor.
+
+```{r, echo = FALSE, message = FALSE}
+ai_re_gam_pars <- gam(ai_reassurance ~ s(t_fscrs_inad) + 
+                   s(fears_of_expressing_compassion_to_self),
+                 data = d)
+summary(ai_re_gam_pars)
+```
+
+#### Model selection
+
+Residuals are very close between the models.
+
+```{r, echo = FALSE, message = FALSE}
+sum(abs(residuals(ai_re_gam_full)))
+sum(abs(residuals(ai_re_gam_pars)))
+```
+
+AIC values are virtually indistinguishable between the models.
+
+```{r, echo = FALSE, message = FALSE}
+AIC(ai_re_gam_full)
+AIC(ai_re_gam_pars)
+```
+
+Deviance explained is also quite close between the models considering one omits a whole variable.
+
+```{r, echo = FALSE, message = FALSE}
+summary(ai_re_gam_full)$dev.expl
+summary(ai_re_gam_pars)$dev.expl
+```
+
+#### Plots
+
+The models are too close to justify the complex model (with stress). The below plots show the relationships for the parsimonious model (without stress).
+
+```{r, echo = FALSE, message = FALSE, results = 'hide',fig.keep = 'all', warning = FALSE}
+p5 <- visreg(ai_re_gam_pars, "t_fscrs_inad", gg = TRUE, ylab = "AI reassurance")
+p6 <- visreg(ai_re_gam_pars, "fears_of_expressing_compassion_to_self", gg = TRUE, 
+       ylab = "AI reassurance")
+
+ggarrange(p5,p6, nrow = 2)
+```
+
+
+## Next steps
+
+I have also run GAM vs GLM comparisons, but the GAMs almost always won out - this is most likely due to the nonlinear relationships seen in some of the plots. I have also done all of these relationships in a Bayesian framework which yielded interesting probabilistic results.

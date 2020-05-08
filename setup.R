@@ -20,6 +20,7 @@ library(Cairo)
 library(rstanarm)
 library(bayesplot)
 library(rmarkdown)
+library(visreg)
 
 # Turn off scientific notation
 
