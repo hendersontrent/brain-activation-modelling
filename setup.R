@@ -19,7 +19,7 @@ library(ggpubr)
 library(Cairo)
 library(rstanarm)
 library(bayesplot)
-library(flextable)
+library(rmarkdown)
 
 # Turn off scientific notation
 

@@ -46,7 +46,7 @@ prior_summary(amyg_re_bayes) # Point estimates here are posterior medians
 
 # Plots
 
-amyg_re_bayes_posterior <- as.matrix(amyg_re_bayes)
+amyg_re_bayes_posterior <- as.array(amyg_re_bayes)
 
 mcmc_areas(amyg_re_bayes_posterior,
            pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
@@ -58,6 +58,9 @@ ppc_dens_overlay(y = amyg_re_bayes$y,
                  yrep = posterior_predict(amyg_re_bayes, draws = the_draws)) +
   labs(title = "Amygdala reassurance posterior predictions",
        subtitle = paste0("Draws = ", the_draws))
+
+mcmc_trace(amyg_re_bayes_posterior, pars = c("(Intercept)", "sigma"), 
+           facet_args = list(ncol = 1, strip.position = "left"))
 
 # Return Bayesian uncertainty intervals
 
@@ -96,7 +99,7 @@ prior_summary(mpfc_re_bayes) # Point estimates here are posterior medians
 
 # Plots
 
-mpfc_re_bayes_posterior <- as.matrix(mpfc_re_bayes)
+mpfc_re_bayes_posterior <- as.array(mpfc_re_bayes)
 
 mcmc_areas(mpfc_re_bayes_posterior,
            pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
@@ -108,6 +111,9 @@ ppc_dens_overlay(y = mpfc_re_bayes$y,
                  yrep = posterior_predict(mpfc_re_bayes, draws = the_draws)) +
   labs(title = "MPFC reassurance posterior predictions",
        subtitle = paste0("Draws = ", the_draws))
+
+mcmc_trace(mpfc_re_bayes_posterior, pars = c("(Intercept)", "sigma"), 
+           facet_args = list(ncol = 1, strip.position = "left"))
 
 # Return Bayesian uncertainty intervals
 
@@ -146,7 +152,7 @@ prior_summary(ai_re_bayes) # Point estimates here are posterior medians
 
 # Plots
 
-ai_re_bayes_posterior <- as.matrix(ai_re_bayes)
+ai_re_bayes_posterior <- as.array(ai_re_bayes)
 
 mcmc_areas(ai_re_bayes_posterior,
            pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
@@ -158,6 +164,9 @@ ppc_dens_overlay(y = ai_re_bayes$y,
                  yrep = posterior_predict(ai_re_bayes, draws = the_draws)) +
   labs(title = "AI reassurance posterior predictions",
        subtitle = paste0("Draws = ", the_draws))
+
+mcmc_trace(ai_re_bayes_posterior, pars = c("(Intercept)", "sigma"), 
+           facet_args = list(ncol = 1, strip.position = "left"))
 
 # Return Bayesian uncertainty intervals
 
