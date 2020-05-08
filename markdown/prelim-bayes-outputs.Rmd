@@ -58,7 +58,7 @@ invisible(amyg_re_bayes <- stan_glm(amygdala_reassurance ~ s_dass_stress + t_fsc
 
 # Plots
 
-amyg_re_bayes_posterior <- as.matrix(amyg_re_bayes)
+amyg_re_bayes_posterior <- as.array(amyg_re_bayes)
 
 mcmc_areas(amyg_re_bayes_posterior,
            pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
@@ -76,7 +76,14 @@ ppc_dens_overlay(y = amyg_re_bayes$y,
        subtitle = "Draws = 100")
 ```
 
-Bayesian uncertainty intervals suggest none of the predictors explain amygdala reassurance.
+Trace plots suggest no issues with convergence.
+
+```{r, echo = FALSE, message = FALSE}
+mcmc_trace(amyg_re_bayes_posterior, pars = c("(Intercept)", "sigma"), 
+           facet_args = list(ncol = 1, strip.position = "left"))
+```
+
+Bayesian uncertainty intervals.
 
 ```{r, echo = FALSE, message = FALSE}
 posterior_interval(amyg_re_bayes, prob = 0.95,
@@ -97,7 +104,7 @@ invisible(mpfc_re_bayes <- stan_glm(mpfc_reassuring ~ s_dass_stress + t_fscrs_in
 
 # Plots
 
-mpfc_re_bayes_posterior <- as.matrix(mpfc_re_bayes)
+mpfc_re_bayes_posterior <- as.array(mpfc_re_bayes)
 
 mcmc_areas(mpfc_re_bayes_posterior,
            pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
@@ -113,6 +120,13 @@ ppc_dens_overlay(y = mpfc_re_bayes$y,
                  yrep = posterior_predict(mpfc_re_bayes, draws = 100)) +
   labs(title = "MPFC reassurance posterior predictions",
        subtitle = "Draws = 100")
+```
+
+Trace plots suggest no issues with convergence.
+
+```{r, echo = FALSE, message = FALSE}
+mcmc_trace(mpfc_re_bayes_posterior, pars = c("(Intercept)", "sigma"), 
+           facet_args = list(ncol = 1, strip.position = "left"))
 ```
 
 Bayesian uncertainty intervals suggest that there is essentially zero probability that inadequate forms of criticism is < 0.
@@ -149,7 +163,7 @@ invisible(ai_re_bayes <- stan_glm(ai_reassurance ~ s_dass_stress + t_fscrs_inad 
 
 # Plots
 
-ai_re_bayes_posterior <- as.matrix(ai_re_bayes)
+ai_re_bayes_posterior <- as.array(ai_re_bayes)
 
 mcmc_areas(ai_re_bayes_posterior,
            pars = c("s_dass_stress", "t_fscrs_inad", "fears_of_expressing_compassion_to_self"),
@@ -165,6 +179,13 @@ ppc_dens_overlay(y = ai_re_bayes$y,
                  yrep = posterior_predict(ai_re_bayes, draws = 100)) +
   labs(title = "AI reassurance posterior predictions",
        subtitle = "Draws = 100")
+```
+
+Trace plots suggest no issues with convergence.
+
+```{r, echo = FALSE, message = FALSE}
+mcmc_trace(ai_re_bayes_posterior, pars = c("(Intercept)", "sigma"), 
+           facet_args = list(ncol = 1, strip.position = "left"))
 ```
 
 Bayesian uncertainty intervals suggest that there is essentially zero probability that inadequate forms of criticism is < 0.
