@@ -14,3 +14,4 @@ output/*.csv
 *.Rda
 
 markdown/*.html
+markdown/*.docx
