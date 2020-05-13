@@ -66,9 +66,16 @@ p2 <- d %>%
   theme(panel.grid.minor = element_blank())
 print(p2)
 
+# Brain diagram
+
+brain_data <- readPNG("data/brain-plot.png")
+
+brain_plot <- ggplot() + 
+  background_image(brain_data)
+
 #-----------------OUTPUTS--------------------
 
-CairoPNG("output/final-graphic", 800, 600)
+CairoPNG("output/final-graphic.png", 800, 600)
 ggarrange(p, p1, p2, brain_plot,
           ncol = 2, nrow = 2)
 dev.off()
@@ -95,10 +102,11 @@ m1_results <- tidy(model1) %>%
   mutate(model = "MPFC ~ Forms")
 
 m2_results <- tidy(model2) %>%
-  mutate(model = "AI ~ Fears")
+  mutate(model = "AI ~ Forms")
 
 the_results <- bind_rows(m_results, m1_results, m2_results) %>%
-  dplyr::select(6,1,2,3,4,5)
+  dplyr::select(6,1,2,3,4,5) %>%
+  mutate(p.value = round(p.value, digits = 3))
 
 # Model fits
 
@@ -109,13 +117,13 @@ m1_fits <- glance(model1) %>%
   mutate(model = "MPFC ~ Forms")
 
 m2_fits <- glance(model2) %>%
-  mutate(model = "AI ~ Fears")
+  mutate(model = "AI ~ Forms")
 
 fits_results <- bind_rows(m_fits, m1_fits, m2_fits) %>%
   dplyr::select(7,1,2,3,4,5,6)
 
-results_table <- flextable(the_results)
-fits_table <- flextable(fits_results)
+results_table <- autofit(flextable(the_results))
+fits_table <- autofit(flextable(fits_results))
 
 # Outputs
 

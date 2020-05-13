@@ -15,3 +15,5 @@ output/*.csv
 
 markdown/*.html
 markdown/*.docx
+
+data/*.png
