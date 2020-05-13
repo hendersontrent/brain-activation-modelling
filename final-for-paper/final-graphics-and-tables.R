@@ -1,14 +1,13 @@
 #-----------------------------------------
-# This script aims to reproduce Jeff's 
-# initial plots but using GAM instead of
-# LOESS
+# This script aims to produce the final
+# graphics for the paper
 #
 # NOTE: This script requires setup.R to
 # have been run first
 #-----------------------------------------
 
 #-----------------------------------------
-# Author: Trent Henderson, 5 May 2020
+# Author: Trent Henderson, 13 May 2020
 #-----------------------------------------
 
 # Load data
@@ -28,7 +27,7 @@ p <- d %>%
   geom_point(size = 2) +
   labs(title = "Fears Express Compassion Self and MPFC",
        x = "Fears",
-       y = "% Signal Change MPFC") +
+       y = "MPFC reassurance signal z-score") +
   scale_x_continuous(limits = c(1,4),
                      breaks = seq(from = 1, to = 4, by = 1)) +
   theme_bw() +
@@ -44,7 +43,7 @@ p1 <- d %>%
   geom_point(size = 2) +
   labs(title = "Inadequate Forms Criticism and MPFC",
        x = "Forms",
-       y = "% Signal Change MPFC") +
+       y = "MPFC reassurance signal z-score") +
   scale_x_continuous(limits = c(1,5),
                      breaks = seq(from = 1, to = 5, by = 1)) +
   theme_bw() +
@@ -60,16 +59,73 @@ p2 <- d %>%
   geom_point(size = 2) +
   labs(title = "Inadequate Forms Criticism and AI",
        x = "Forms",
-       y = "% Signal Change MPFC") +
+       y = "AI reassurance signal z-score") +
   scale_x_continuous(limits = c(1,5),
                      breaks = seq(from = 1, to = 5, by = 1)) +
   theme_bw() +
   theme(panel.grid.minor = element_blank())
 print(p2)
 
+# Brain diagram
+
+brain_data <- readPNG("data/brain-plot.png")
+
+brain_plot <- ggplot() + 
+  background_image(brain_data)
+
 #-----------------OUTPUTS--------------------
 
-CairoPNG("output/replication-charts.png", 800, 600)
-ggarrange(p, p1, p2,
+CairoPNG("output/final-graphic.png", 800, 600)
+ggarrange(p, p1, p2, brain_plot,
           ncol = 2, nrow = 2)
 dev.off()
+
+#-----------------MODELLING------------------
+
+# Model builds
+
+model <- gam(mpfc_reassuring ~ s(fears_of_expressing_compassion_to_self),
+             data = d)
+
+model1 <- gam(mpfc_reassuring ~ s(t_fscrs_inad),
+              data = d)
+
+model2 <- gam(ai_reassurance ~ s(t_fscrs_inad),
+              data = d)
+
+# Model statistics
+
+m_results <- tidy(model) %>%
+  mutate(model = "MPFC ~ Fears")
+
+m1_results <- tidy(model1) %>%
+  mutate(model = "MPFC ~ Forms")
+
+m2_results <- tidy(model2) %>%
+  mutate(model = "AI ~ Forms")
+
+the_results <- bind_rows(m_results, m1_results, m2_results) %>%
+  dplyr::select(6,1,2,3,4,5) %>%
+  mutate(p.value = round(p.value, digits = 3))
+
+# Model fits
+
+m_fits <- glance(model) %>%
+  mutate(model = "MPFC ~ Fears")
+
+m1_fits <- glance(model1) %>%
+  mutate(model = "MPFC ~ Forms")
+
+m2_fits <- glance(model2) %>%
+  mutate(model = "AI ~ Forms")
+
+fits_results <- bind_rows(m_fits, m1_fits, m2_fits) %>%
+  dplyr::select(7,1,2,3,4,5,6)
+
+results_table <- autofit(flextable(the_results))
+fits_table <- autofit(flextable(fits_results))
+
+# Outputs
+
+print(results_table)
+print(fits_table)

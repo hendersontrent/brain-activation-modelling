@@ -21,6 +21,8 @@ library(rstanarm)
 library(bayesplot)
 library(rmarkdown)
 library(visreg)
+library(flextable)
+library(png)
 
 # Turn off scientific notation
 
