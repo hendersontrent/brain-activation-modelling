@@ -27,7 +27,7 @@ p <- d %>%
   geom_point(size = 2) +
   labs(title = "Fears Express Compassion Self and MPFC",
        x = "Fears",
-       y = "% Signal Change MPFC") +
+       y = "MPFC reassurance signal z-score") +
   scale_x_continuous(limits = c(1,4),
                      breaks = seq(from = 1, to = 4, by = 1)) +
   theme_bw() +
@@ -43,7 +43,7 @@ p1 <- d %>%
   geom_point(size = 2) +
   labs(title = "Inadequate Forms Criticism and MPFC",
        x = "Forms",
-       y = "% Signal Change MPFC") +
+       y = "MPFC reassurance signal z-score") +
   scale_x_continuous(limits = c(1,5),
                      breaks = seq(from = 1, to = 5, by = 1)) +
   theme_bw() +
@@ -59,7 +59,7 @@ p2 <- d %>%
   geom_point(size = 2) +
   labs(title = "Inadequate Forms Criticism and AI",
        x = "Forms",
-       y = "% Signal Change MPFC") +
+       y = "AI reassurance signal z-score") +
   scale_x_continuous(limits = c(1,5),
                      breaks = seq(from = 1, to = 5, by = 1)) +
   theme_bw() +
